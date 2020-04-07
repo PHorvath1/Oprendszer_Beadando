@@ -1,0 +1,6 @@
+total 16
+-rw-rw-r-- 1 ASKLPV ASKLPV 10278 Apr  7 11:57 testFile1.txt
+-rw-rw-r-- 1 ASKLPV ASKLPV    70 Apr  7 11:58 testFile2.txt
+-rw-rw-r-- 1 ASKLPV ASKLPV     0 Apr  7 11:58 testFile3.txt
+-rw-rw-r-- 1 ASKLPV ASKLPV     0 Apr  7 11:56 testFile4.txt
+-rw-rw-r-- 1 ASKLPV ASKLPV     0 Apr  7 11:56 testFile5.txt
