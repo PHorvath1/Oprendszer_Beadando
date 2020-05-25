@@ -9,6 +9,8 @@ sortData() {
 	cat temp.txt | cut -c 11-427 > Data.txt
 	rm temp.txt
 	IFS=',' read -ra VALUES < Data.txt
+	C=`expr ${#VALUES}+1`
+	VALUES[C]="EUR":1.000
 	for i in "${VALUES[*]}"; do
 		echo "$i" > Data.txt
 	done
@@ -35,23 +37,45 @@ PARAMS="$#"
 if [ "$PARAMS" -eq 0 ] ; then
 	echo "A program mukodesehez segitseget kaphat a kovetkezokeppen: ./MoneyExchange.sh -h"
 else
-	case "$PARAMS" in
-		1) if [ "$1" = "-h" ] ; then
+	while getopts 'f:t:a:hl' option
+	do
+		case "$option" in
+			h)
 		   	echo "A programot a kovetkezokeppen tudja hasznalni:"
-			echo "./MoneyExchange.sh [FROM] [TO]: atvalt [FROM] penznembol 1-et [TO] penznemre"
-			echo "./MoneyExchange.sh [FROM] [TO] [AMOUNT]: atvalt [FROM] penznembol [AMOUNT]-ot [TO] penznemre"
-			echo "A [FROM] es a [TO] koze a valutak ISO 4217 kodja kell"
-		   else
-			echo "Nincs ilyen opcio!"
-		   fi;;
-		2) exchange "$1" "$2"
-		   EREDMENY="$NUM"
-		   echo "1 $1 = $EREDMENY $2"
-		   ;;
-		3) exchange "$1" "$2" "$3"
-		   EREDMENY="$NUM"
-		   echo "$3 $1 = $EREDMENY $2"
-		   ;;
-	esac
+			echo "./MoneyExchange.sh -f [FROM] -t [TO]: atvalt [FROM] penznembol 1-et [TO] penznemre"
+			echo "./MoneyExchange.sh -f [FROM] -t [TO] -a [AMOUNT]: atvalt [FROM] penznembol [AMOUNT]-ot [TO] penznemre"
+			echo "A [FROM] es a [TO] koze a valutak ISO 4217 kodja kell (pl.: magyar forint = HUF)"
+			echo "Az atvalthato valutak listajat elerheti a -l opcioval"
+			exit
+		   	;;
+			l)
+			sortData
+			cat Data.txt
+			rm Data.txt
+			exit
+			;;
+			f) F=${OPTARG}
+		   	;;
+			t) T=${OPTARG}
+		   	;;
+			a) A=${OPTARG}
+			;;
+		esac
+	done
+	if [ "$F" != "" ] ; then
+		if [ "$T" != "" ] ; then
+			if [ "$A" != "" ] ; then
+				exchange "$F" "$T" "$A"
+				RESULT="$NUM"
+				echo "$A" "$F" "=" "$RESULT" "$T"
+			else
+				exchange "$F" "$T"
+				RESULT="$NUM"
+				echo "1" "$F" "=" "$RESULT" "$T"
+			fi
+		fi
+	fi
 fi
-rm Data.txt
+if [ -f Data.txt ] ; then
+	rm Data.txt
+fi
